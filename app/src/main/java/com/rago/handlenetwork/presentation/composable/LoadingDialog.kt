@@ -19,13 +19,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 
 @Composable
 fun LoadingDialog(
     showDialog: Boolean = false
 ) {
     if (showDialog) {
-        LoadingDialogContent()
+        Dialog(onDismissRequest = {}) {
+            LoadingDialogContent()
+        }
     }
 }
 
@@ -33,9 +36,7 @@ fun LoadingDialog(
 @Preview(showBackground = true)
 private fun LoadingDialogContent() {
     ElevatedCard(
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = Color.White
-        )
+        colors = CardDefaults.elevatedCardColors()
     ) {
         Row(
             Modifier

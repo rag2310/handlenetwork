@@ -1,6 +1,8 @@
 package com.rago.handlenetwork.data.di
 
+import com.rago.handlenetwork.data.service.TaskApiService
 import com.rago.handlenetwork.data.utils.Constants
+import com.rago.handlenetwork.data.utils.RetrofitUtils
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,5 +37,19 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(Constants.BASE_URL)
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideTaskApiService(
+        retrofit: Retrofit
+    ): TaskApiService {
+        return retrofit.create(TaskApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofitUtils(): RetrofitUtils {
+        return RetrofitUtils()
     }
 }

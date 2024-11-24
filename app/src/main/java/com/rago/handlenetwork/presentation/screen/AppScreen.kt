@@ -12,13 +12,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.rago.handlenetwork.data.utils.Constants
 import com.rago.handlenetwork.presentation.composable.LoadingDialog
 import com.rago.handlenetwork.presentation.uistate.AppUIState
+import com.rago.handlenetwork.presentation.uistate.TaskListUIState
+import com.rago.handlenetwork.presentation.viewmodel.TaskListViewModel
 
 
 @Composable
@@ -62,7 +68,15 @@ private fun AppScreenContent(
             }
 
             composable(Constants.TASK_LIST_ROUTE) {
-                TaskListScreen()
+                val taskListViewModel: TaskListViewModel = hiltViewModel()
+                val taskListUIState: TaskListUIState by taskListViewModel.uiState.collectAsState()
+                LaunchedEffect(key1 = Unit) {
+                    taskListUIState.apply {
+                        setOnHideLoading(appUIState.onHideLoading)
+                        setOnShowLoading(appUIState.onShowLoading)
+                    }
+                }
+                TaskListScreen(taskListUIState)
             }
         }
     }
