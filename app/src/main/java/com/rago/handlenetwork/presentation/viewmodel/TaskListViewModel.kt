@@ -30,17 +30,14 @@ class TaskListViewModel @Inject constructor(
 
     private fun getTasks() {
         viewModelScope.launch {
-            uiState.value.onShowLoading()
             val response = taskUseCase.executeGetTask().first()
 
             response.fold({ success ->
                 _uiState.update {
                     it.copy(tasks = success.data ?: listOf())
                 }
-                uiState.value.onHideLoading()
             }, { error ->
                 Log.i("TAG", "getTasks: ${error.error}")
-                uiState.value.onHideLoading()
             })
         }
     }

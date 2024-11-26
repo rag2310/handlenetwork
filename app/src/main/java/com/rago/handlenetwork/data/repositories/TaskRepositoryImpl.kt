@@ -5,7 +5,7 @@ import com.rago.handlenetwork.data.model.ErrorResponse
 import com.rago.handlenetwork.data.model.SuccessResponse
 import com.rago.handlenetwork.data.model.Task
 import com.rago.handlenetwork.data.service.TaskApiService
-import com.rago.handlenetwork.data.utils.RetrofitUtils
+import com.rago.handlenetwork.data.utils.network.RetrofitUtils
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

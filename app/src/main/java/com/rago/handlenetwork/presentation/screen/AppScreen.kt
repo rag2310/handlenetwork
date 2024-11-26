@@ -5,12 +5,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,6 +23,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.rago.handlenetwork.data.utils.Constants
+import com.rago.handlenetwork.data.utils.network.RetrofitUIState
 import com.rago.handlenetwork.presentation.composable.LoadingDialog
 import com.rago.handlenetwork.presentation.uistate.AppUIState
 import com.rago.handlenetwork.presentation.uistate.TaskListUIState
@@ -28,8 +31,32 @@ import com.rago.handlenetwork.presentation.viewmodel.TaskListViewModel
 
 
 @Composable
-fun AppScreen(appUIState: AppUIState, navController: NavHostController, currentRoute: String?) {
-    LoadingDialog(showDialog = appUIState.loading)
+fun AppScreen(
+    appUIState: AppUIState,
+    retrofitUIState: RetrofitUIState,
+    navController: NavHostController,
+    currentRoute: String?
+) {
+    if (retrofitUIState.showDialogAgain) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = {
+                Text("Desea ejecutar de nuevo?")
+            },
+            text = {
+
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    retrofitUIState.onAgainApi()
+                }) {
+                    Text("De nuevo")
+                }
+
+            }
+        )
+    }
+    LoadingDialog(showDialog = retrofitUIState.loading, retrofitUIState)
     AppScreenContent(appUIState, navController, currentRoute)
 }
 

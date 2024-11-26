@@ -11,20 +11,27 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.rago.handlenetwork.data.utils.network.RetrofitUIState
+import com.rago.handlenetwork.data.utils.network.RetrofitUtils
 import com.rago.handlenetwork.presentation.screen.AppScreen
 import com.rago.handlenetwork.presentation.uistate.AppUIState
 import com.rago.handlenetwork.presentation.viewmodel.AppViewModel
 import com.rago.handlenetwork.ui.theme.HandleNetworkTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var retrofitUtils: RetrofitUtils
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val appViewModel: AppViewModel = hiltViewModel()
             val appUIState:AppUIState by appViewModel.uiState.collectAsState()
+            val retrofitUIState: RetrofitUIState by retrofitUtils.uiState.collectAsState()
             val navController = rememberNavController()
 
             val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
@@ -32,7 +39,7 @@ class MainActivity : ComponentActivity() {
                 Log.i("TAG", "AppScreen: $currentRoute")
             }
             HandleNetworkTheme {
-                AppScreen(appUIState, navController, currentRoute)
+                AppScreen(appUIState, retrofitUIState, navController, currentRoute)
             }
         }
     }
