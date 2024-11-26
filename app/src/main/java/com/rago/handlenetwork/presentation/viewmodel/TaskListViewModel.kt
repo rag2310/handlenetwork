@@ -19,6 +19,22 @@ class TaskListViewModel @Inject constructor(
     private val taskUseCase: TaskUseCase
 ) : ViewModel() {
 
+    private val mapMethods = mutableMapOf<String, () -> Unit>()
+    private val currentMethods = ""
+
+    init {
+        configurationMapMethods()
+    }
+
+    private fun configurationMapMethods() {
+        mapMethods["getTasks"] = ::getTasks
+    }
+
+    private fun executeCurrentMethods(){
+        mapMethods[currentMethods]?.invoke()
+    }
+
+
     private val _uiState: MutableStateFlow<TaskListUIState> = MutableStateFlow(
         TaskListUIState(
             getTasks = ::getTasks,
