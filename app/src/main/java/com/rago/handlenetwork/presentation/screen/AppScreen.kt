@@ -26,7 +26,9 @@ import com.rago.handlenetwork.data.utils.Constants
 import com.rago.handlenetwork.data.utils.network.RetrofitUIState
 import com.rago.handlenetwork.presentation.composable.LoadingDialog
 import com.rago.handlenetwork.presentation.uistate.AppUIState
+import com.rago.handlenetwork.presentation.uistate.SignaturePadUIState
 import com.rago.handlenetwork.presentation.uistate.TaskListUIState
+import com.rago.handlenetwork.presentation.viewmodel.SignaturePadViewModel
 import com.rago.handlenetwork.presentation.viewmodel.TaskListViewModel
 
 
@@ -57,7 +59,7 @@ fun AppScreen(
         )
     }
     LoadingDialog(showDialog = retrofitUIState.loading, retrofitUIState)
-    AppScreenContent(appUIState, navController, currentRoute)
+    AppScreenContent(appUIState, navController, currentRoute, retrofitUIState)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +67,8 @@ fun AppScreen(
 private fun AppScreenContent(
     appUIState: AppUIState = AppUIState(),
     navController: NavHostController,
-    currentRoute: String?
+    currentRoute: String?,
+    retrofitUIState: RetrofitUIState
 ) {
     Scaffold(Modifier.fillMaxSize(), topBar = {
         CenterAlignedTopAppBar(
@@ -103,7 +106,17 @@ private fun AppScreenContent(
                         setOnShowLoading(appUIState.onShowLoading)
                     }
                 }
-                TaskListScreen(taskListUIState)
+                TaskListScreen(taskListUIState, retrofitUIState)
+            }
+
+            composable(Constants.SIGNATURE_PAD){
+                val signaturePadViewModel: SignaturePadViewModel = hiltViewModel()
+                val signaturePadUIState: SignaturePadUIState by signaturePadViewModel.uiState.collectAsState()
+                SignaturePadScreen(signaturePadUIState)
+            }
+
+            composable(Constants.SIGNATURE){
+                SignatureScreen()
             }
         }
     }

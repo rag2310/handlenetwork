@@ -20,7 +20,8 @@ fun HomeScreen(navController: NavHostController) {
 }
 
 @Composable
-private fun HomeScreenContent(navController: NavHostController) {
+@Preview(showBackground = true)
+private fun HomeScreenContent(navController: NavHostController? = null) {
     Column(
         Modifier
             .fillMaxSize()
@@ -28,9 +29,14 @@ private fun HomeScreenContent(navController: NavHostController) {
         verticalArrangement = Arrangement.Center
     ) {
         Button(modifier = Modifier.fillMaxWidth(), onClick = {
-            navController.navigate(Constants.TASK_LIST_ROUTE)
+            navController?.navigate(Constants.TASK_LIST_ROUTE)
         }) {
             Text("Tasks")
+        }
+        Button(modifier = Modifier.fillMaxWidth(), onClick = {
+            navController?.navigate(Constants.SIGNATURE_PAD)
+        }) {
+            Text("Signature")
         }
     }
 }

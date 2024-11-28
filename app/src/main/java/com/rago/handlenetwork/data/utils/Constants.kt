@@ -6,4 +6,6 @@ object Constants {
 
     const val HOME_ROUTE = "home"
     const val TASK_LIST_ROUTE = "task_list"
+    const val SIGNATURE = "signature"
+    const val SIGNATURE_PAD = "signature_pad"
 }

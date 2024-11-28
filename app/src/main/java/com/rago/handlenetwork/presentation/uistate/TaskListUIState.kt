@@ -8,5 +8,6 @@ data class TaskListUIState(
     val setOnShowLoading: (() -> Unit) -> Unit = {},
     val setOnHideLoading: (() -> Unit) -> Unit = {},
     val onShowLoading: () -> Unit = {},
-    val onHideLoading: () -> Unit = {}
+    val onHideLoading: () -> Unit = {},
+    val executeCurrentMethods: () -> Unit = {}
 )

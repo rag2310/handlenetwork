@@ -20,7 +20,7 @@ class TaskListViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val mapMethods = mutableMapOf<String, () -> Unit>()
-    private val currentMethods = ""
+    private var currentMethods = ""
 
     init {
         configurationMapMethods()
@@ -30,8 +30,12 @@ class TaskListViewModel @Inject constructor(
         mapMethods["getTasks"] = ::getTasks
     }
 
-    private fun executeCurrentMethods(){
+    private fun executeCurrentMethods() {
         mapMethods[currentMethods]?.invoke()
+    }
+
+    private fun setCurrentMethods(method: String) {
+        currentMethods = method
     }
 
 
@@ -39,12 +43,14 @@ class TaskListViewModel @Inject constructor(
         TaskListUIState(
             getTasks = ::getTasks,
             setOnShowLoading = ::setOnShowLoading,
-            setOnHideLoading = ::setOnHideLoading
+            setOnHideLoading = ::setOnHideLoading,
+            executeCurrentMethods = ::executeCurrentMethods
         )
     )
     val uiState: StateFlow<TaskListUIState> = _uiState.asStateFlow()
 
     private fun getTasks() {
+        currentMethods = "getTasks"
         viewModelScope.launch {
             val response = taskUseCase.executeGetTask().first()
 
@@ -52,6 +58,7 @@ class TaskListViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(tasks = success.data ?: listOf())
                 }
+                currentMethods = ""
             }, { error ->
                 Log.i("TAG", "getTasks: ${error.error}")
             })

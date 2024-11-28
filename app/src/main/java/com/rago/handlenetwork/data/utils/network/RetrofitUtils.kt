@@ -29,9 +29,8 @@ class RetrofitUtils @Inject constructor() {
     val uiState: StateFlow<RetrofitUIState> = _uiState.asStateFlow()
 
     private fun onAgainApi() {
-        uiState.value.currentApi?.execute()
         _uiState.update {
-            it.copy(showDialogAgain = false)
+            it.copy(showDialogAgain = false, refresh = true)
         }
     }
 
@@ -46,7 +45,7 @@ class RetrofitUtils @Inject constructor() {
 
     fun <T> arrow(api: Call<T>): Flow<Either<SuccessResponse<T>, ErrorResponse>> = callbackFlow {
         _uiState.update {
-            it.copy(loading = true)
+            it.copy(loading = true, refresh = false)
         }
         val callback: Callback<T> = object : Callback<T> {
             override fun onResponse(p0: Call<T>, response: Response<T>) {

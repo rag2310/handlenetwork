@@ -19,12 +19,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rago.handlenetwork.data.model.Priority
 import com.rago.handlenetwork.data.model.Task
+import com.rago.handlenetwork.data.utils.network.RetrofitUIState
 import com.rago.handlenetwork.presentation.uistate.TaskListUIState
 
 @Composable
-fun TaskListScreen(taskListUIState: TaskListUIState) {
+fun TaskListScreen(taskListUIState: TaskListUIState, retrofitUIState: RetrofitUIState) {
     LaunchedEffect(key1 = Unit) {
         taskListUIState.getTasks()
+    }
+
+    LaunchedEffect(key1 = retrofitUIState.refresh) {
+        if (retrofitUIState.refresh) {
+            taskListUIState.executeCurrentMethods()
+        }
     }
     TaskListScreenContent(taskListUIState)
 }

@@ -7,5 +7,6 @@ data class RetrofitUIState(
     val currentApi: Call<*>? = null,
     val showDialogAgain: Boolean = false,
     val onAgainApi: () -> Unit = {},
-    val cancelCurrentApi: () -> Unit = {}
+    val cancelCurrentApi: () -> Unit = {},
+    val refresh: Boolean = false
 )
