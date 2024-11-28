@@ -3,6 +3,7 @@ package com.rago.handlenetwork.presentation.screen
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Environment
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,9 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -30,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -50,14 +50,9 @@ fun SignaturePadScreen(signaturePadUIState: SignaturePadUIState) {
 @Composable
 @Preview(showBackground = true)
 private fun SignaturePadScreenContent(signaturePadUIState: SignaturePadUIState = SignaturePadUIState()) {
-//    val points = remember { mutableStateListOf<Offset>() } // Lista de puntos de la firma
-//    var canvasSize by remember { mutableStateOf(androidx.compose.ui.geometry.Size.Zero) }
-//    Devices.DESKTOP
     Column(
         Modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding()
     ) {
         Box(
             Modifier
@@ -66,6 +61,7 @@ private fun SignaturePadScreenContent(signaturePadUIState: SignaturePadUIState =
                 .weight(1f, true)
                 .background(Color.Red, RoundedCornerShape(8.dp))
                 .border(1.dp, shape = RoundedCornerShape(8.dp), color = Color.Black)
+                .clip(RoundedCornerShape(8.dp))
         ) {
             Canvas(
                 modifier = Modifier
@@ -74,7 +70,8 @@ private fun SignaturePadScreenContent(signaturePadUIState: SignaturePadUIState =
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragStart = { signaturePadUIState.onAddPoint(it) },
-                            onDrag = { change, _ -> signaturePadUIState.onAddPoint(change.position) }
+                            onDrag = { change, _ -> signaturePadUIState.onAddPoint(change.position) },
+                            onDragEnd = { signaturePadUIState.onEndDraw() }
                         )
                     }
             ) {
@@ -87,6 +84,18 @@ private fun SignaturePadScreenContent(signaturePadUIState: SignaturePadUIState =
                         strokeWidth = 4f,
                         cap = StrokeCap.Round
                     )
+                }
+
+                for (stroke in signaturePadUIState.draw){
+                    for (i in 1 until stroke.size){
+                        drawLine(
+                            color = Color.Black,
+                            start = stroke[i - 1],
+                            end = stroke[i],
+                            strokeWidth = 4f,
+                            cap = StrokeCap.Round
+                        )
+                    }
                 }
             }
         }
@@ -116,10 +125,11 @@ private fun SignaturePadScreenContent(signaturePadUIState: SignaturePadUIState =
 
             Button(onClick = {
                 saveSignatureToPNG(
-                    points = signaturePadUIState.points,
+                    points = signaturePadUIState.draw,
                     canvasWidth = signaturePadUIState.canvasSize?.width?.toInt() ?: 0,
                     canvasHeight = signaturePadUIState.canvasSize?.height?.toInt() ?: 0
                 ) { filePath ->
+                    Log.i("<--Signature-->", "SignaturePadScreenContent: [$filePath]")
 //                onSave(filePath) // Llama al callback con la ruta del archivo generado
                 }
             }) {
@@ -132,8 +142,8 @@ private fun SignaturePadScreenContent(signaturePadUIState: SignaturePadUIState =
 }
 
 fun saveSignatureToPNG(
-    points: List<Offset>,
-    canvasWidth: Int, // Dimensiones del Canvas de Jetpack Compose
+    points: List<List<Offset>>, // Lista de trazos
+    canvasWidth: Int,
     canvasHeight: Int,
     onComplete: (String) -> Unit
 ) {
@@ -148,15 +158,17 @@ fun saveSignatureToPNG(
 
     canvas.drawColor(android.graphics.Color.WHITE)
 
-    val androidPath = android.graphics.Path()
-    if (points.isNotEmpty()) {
-        androidPath.moveTo(points[0].x, points[0].y)
-        for (i in 1 until points.size) {
-            androidPath.lineTo(points[i].x, points[i].y)
+    // Dibujar cada trazo
+    for (stroke in points) {
+        val androidPath = android.graphics.Path()
+        if (stroke.isNotEmpty()) {
+            androidPath.moveTo(stroke[0].x, stroke[0].y)
+            for (i in 1 until stroke.size) {
+                androidPath.lineTo(stroke[i].x, stroke[i].y)
+            }
         }
+        canvas.drawPath(androidPath, paint)
     }
-
-    canvas.drawPath(androidPath, paint)
 
     val fileName = "signature_${System.currentTimeMillis()}.png"
     val file = File(
@@ -168,5 +180,5 @@ fun saveSignatureToPNG(
     outputStream.flush()
     outputStream.close()
 
-    onComplete(file.absolutePath) // Devuelve la ruta del archivo generado
+    onComplete(file.absolutePath)
 }

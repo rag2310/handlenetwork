@@ -18,6 +18,7 @@ class SignaturePadViewModel @Inject constructor() : ViewModel() {
     private val _uiState: MutableStateFlow<SignaturePadUIState> = MutableStateFlow(
         SignaturePadUIState(
             onAddPoint = ::onAddPoint,
+            onEndDraw = ::onEndDraw,
             setCanvasSize = ::setCanvasSize,
             onClearPoints = ::onClearPoints
         )
@@ -33,6 +34,17 @@ class SignaturePadViewModel @Inject constructor() : ViewModel() {
                 it.copy(
                     points = currentPoints
                 )
+            }
+        }
+    }
+
+    private fun onEndDraw() {
+        viewModelScope.launch {
+            val currentPoints = uiState.value.points
+            val currentDraw = uiState.value.draw.toMutableList()
+            currentDraw.add(currentPoints)
+            _uiState.update {
+                it.copy(draw = currentDraw, points = listOf())
             }
         }
     }
