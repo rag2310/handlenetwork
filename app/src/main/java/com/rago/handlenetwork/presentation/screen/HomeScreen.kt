@@ -34,7 +34,7 @@ private fun HomeScreenContent(navController: NavHostController? = null) {
             Text("Tasks")
         }
         Button(modifier = Modifier.fillMaxWidth(), onClick = {
-            navController?.navigate(Constants.SIGNATURE_PAD)
+            navController?.navigate(Constants.SIGNATURE)
         }) {
             Text("Signature")
         }

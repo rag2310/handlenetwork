@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,7 +21,8 @@ class SignaturePadViewModel @Inject constructor() : ViewModel() {
             onAddPoint = ::onAddPoint,
             onEndDraw = ::onEndDraw,
             setCanvasSize = ::setCanvasSize,
-            onClearPoints = ::onClearPoints
+            onClearPoints = ::onClearPoints,
+            setOnReturnFile = ::setOnReturnFile
         )
     )
 
@@ -60,9 +62,16 @@ class SignaturePadViewModel @Inject constructor() : ViewModel() {
     private fun onClearPoints() {
         viewModelScope.launch {
             _uiState.update {
-                it.copy(points = listOf())
+                it.copy(points = listOf(), draw = listOf(), canvasSize = Size.Zero)
             }
         }
     }
 
+    private fun setOnReturnFile(onReturnFile: (File) -> Unit) {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(onReturnFile = onReturnFile)
+            }
+        }
+    }
 }

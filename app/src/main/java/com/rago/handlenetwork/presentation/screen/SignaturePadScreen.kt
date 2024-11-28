@@ -86,8 +86,8 @@ private fun SignaturePadScreenContent(signaturePadUIState: SignaturePadUIState =
                     )
                 }
 
-                for (stroke in signaturePadUIState.draw){
-                    for (i in 1 until stroke.size){
+                for (stroke in signaturePadUIState.draw) {
+                    for (i in 1 until stroke.size) {
                         drawLine(
                             color = Color.Black,
                             start = stroke[i - 1],
@@ -126,11 +126,12 @@ private fun SignaturePadScreenContent(signaturePadUIState: SignaturePadUIState =
             Button(onClick = {
                 saveSignatureToPNG(
                     points = signaturePadUIState.draw,
-                    canvasWidth = signaturePadUIState.canvasSize?.width?.toInt() ?: 0,
-                    canvasHeight = signaturePadUIState.canvasSize?.height?.toInt() ?: 0
-                ) { filePath ->
-                    Log.i("<--Signature-->", "SignaturePadScreenContent: [$filePath]")
-//                onSave(filePath) // Llama al callback con la ruta del archivo generado
+                    canvasWidth = signaturePadUIState.canvasSize.width.toInt(),
+                    canvasHeight = signaturePadUIState.canvasSize.height.toInt()
+                ) { file ->
+                    Log.i("<--Signature-->", "SignaturePadScreenContent: [${file.absolutePath}]")
+                    signaturePadUIState.onClearPoints()
+                    signaturePadUIState.onReturnFile(file)
                 }
             }) {
                 Icon(Icons.Filled.Done, contentDescription = null)
@@ -145,7 +146,7 @@ fun saveSignatureToPNG(
     points: List<List<Offset>>, // Lista de trazos
     canvasWidth: Int,
     canvasHeight: Int,
-    onComplete: (String) -> Unit
+    onComplete: (File) -> Unit
 ) {
     val bitmap = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
@@ -180,5 +181,5 @@ fun saveSignatureToPNG(
     outputStream.flush()
     outputStream.close()
 
-    onComplete(file.absolutePath)
+    onComplete(file)
 }

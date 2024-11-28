@@ -72,4 +72,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.logging.interceptor)
     implementation(libs.gson)
+
+    //COIL
+    implementation(libs.coil.compose)
 }

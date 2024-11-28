@@ -1,5 +1,6 @@
 package com.rago.handlenetwork.presentation.screen
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,12 +24,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.rago.handlenetwork.data.utils.Constants
+import com.rago.handlenetwork.data.utils.getPath
 import com.rago.handlenetwork.data.utils.network.RetrofitUIState
+import com.rago.handlenetwork.data.utils.setObj
 import com.rago.handlenetwork.presentation.composable.LoadingDialog
 import com.rago.handlenetwork.presentation.uistate.AppUIState
 import com.rago.handlenetwork.presentation.uistate.SignaturePadUIState
+import com.rago.handlenetwork.presentation.uistate.SignatureUIState
 import com.rago.handlenetwork.presentation.uistate.TaskListUIState
 import com.rago.handlenetwork.presentation.viewmodel.SignaturePadViewModel
+import com.rago.handlenetwork.presentation.viewmodel.SignatureViewModel
 import com.rago.handlenetwork.presentation.viewmodel.TaskListViewModel
 
 
@@ -109,14 +114,36 @@ private fun AppScreenContent(
                 TaskListScreen(taskListUIState, retrofitUIState)
             }
 
-            composable(Constants.SIGNATURE_PAD){
+            composable(Constants.SIGNATURE_PAD) {
                 val signaturePadViewModel: SignaturePadViewModel = hiltViewModel()
                 val signaturePadUIState: SignaturePadUIState by signaturePadViewModel.uiState.collectAsState()
+                LaunchedEffect(key1 = Unit) {
+                    signaturePadUIState.setOnReturnFile {
+                        navController.previousBackStackEntry?.savedStateHandle?.set("path", it.absolutePath)
+                        navController.popBackStack()
+                    }
+                }
                 SignaturePadScreen(signaturePadUIState)
             }
 
-            composable(Constants.SIGNATURE){
-                SignatureScreen()
+            composable(Constants.SIGNATURE) {
+                val signature = navController.currentBackStackEntry?.savedStateHandle?.get<String>("path")
+
+                val signatureViewModel: SignatureViewModel = hiltViewModel()
+                val signatureUIState: SignatureUIState by signatureViewModel.uiState.collectAsState()
+
+                LaunchedEffect(key1 = signature) {
+                    signatureUIState.setPath(signature)
+                }
+
+                LaunchedEffect(key1 = Unit) {
+                    signatureUIState.setOnNavSignaturePad {
+                        navController.navigate(Constants.SIGNATURE_PAD)
+                    }
+                }
+
+                Log.i("<---SIGNATURE--->", "AppScreenContent: $signature")
+                SignatureScreen(signatureUIState)
             }
         }
     }
