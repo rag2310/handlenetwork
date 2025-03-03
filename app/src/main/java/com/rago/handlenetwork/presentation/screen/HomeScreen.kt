@@ -38,5 +38,12 @@ private fun HomeScreenContent(navController: NavHostController? = null) {
         }) {
             Text("Signature")
         }
+        Button(modifier = Modifier.fillMaxWidth(), onClick = {
+            navController?.navigate(Constants.MARKDOWN)
+        }) {
+            Text("Markdown")
+        }
     }
 }
+
+

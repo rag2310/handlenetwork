@@ -145,6 +145,10 @@ private fun AppScreenContent(
                 Log.i("<---SIGNATURE--->", "AppScreenContent: $signature")
                 SignatureScreen(signatureUIState)
             }
+
+            composable(Constants.MARKDOWN){
+                MarkdownScreen()
+            }
         }
     }
 }

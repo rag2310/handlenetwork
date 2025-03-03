@@ -8,4 +8,5 @@ object Constants {
     const val TASK_LIST_ROUTE = "task_list"
     const val SIGNATURE = "signature"
     const val SIGNATURE_PAD = "signature_pad"
+    const val MARKDOWN = "markdown"
 }
