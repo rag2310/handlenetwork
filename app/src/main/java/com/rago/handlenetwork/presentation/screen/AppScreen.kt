@@ -149,6 +149,10 @@ private fun AppScreenContent(
             composable(Constants.MARKDOWN){
                 MarkdownScreen()
             }
+
+            composable(Constants.VOICE_TO_TEXT){
+                VoiceToTextScreen()
+            }
         }
     }
 }

@@ -76,4 +76,13 @@ dependencies {
     //COIL
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+
+    // MARKDOWN.
+    implementation(libs.markwon.core)
+    implementation(libs.markwon.image.coil)
+    implementation(libs.coil)
+    implementation(libs.coil.svg)
+
+    //TEXT TO SPEECH
+    implementation("androidx.activity:activity-compose:1.7.2")
 }

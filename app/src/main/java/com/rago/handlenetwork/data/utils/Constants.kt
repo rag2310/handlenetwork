@@ -9,4 +9,5 @@ object Constants {
     const val SIGNATURE = "signature"
     const val SIGNATURE_PAD = "signature_pad"
     const val MARKDOWN = "markdown"
+    const val VOICE_TO_TEXT = "voice_to_text"
 }
